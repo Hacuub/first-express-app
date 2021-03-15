@@ -1,6 +1,7 @@
 import express from 'express';
 import users from './data/user-data.js';
 import path from 'path';
+import bodyParser from 'body-parser';
 
 //console.log(users);
 
@@ -9,6 +10,25 @@ const PORT = 3000;
 
 // "public" folder, "source" folder
 app.use('/assets', express.static('client/'));
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.post('/add-user', (req, res) =>{
+if(!req.body.firstname || !req.body.lastname){
+    return res.status(404).json({error: "firstname and lastname are both required", id: "badRequest"});
+}
+
+const nextID = Math.max(...users.map((user) => +user.id)) + 1;
+
+const newUser = {
+    first_name: req.body.firstname,
+    last_name: req.body.lastname,
+    id: nextID
+};
+users.push(newUser);
+
+return res.status(201).json(newUser);
+});
 
 app.get('/', (req, res) => {
     //res.send(`A GET request on route '/'`);
@@ -23,6 +43,11 @@ app.get('/styles/default-styles.css', (req, res) => {
 app.get('/images/dr-evil.jpg', (req, res) => {
     //res.send(`A GET request on route '/'`);
     res.sendFile(path.resolve('client/images/dr-evil.jpg'));
+});
+
+app.get('/add-user-form.html', (req, res) => {
+    //res.send(`A GET request on route '/'`);
+    res.sendFile(path.resolve('client/html/add-user-form.html'));
 });
 
 

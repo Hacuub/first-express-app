@@ -1,14 +1,30 @@
 import express from 'express';
 import users from './data/user-data.js';
+import path from 'path';
 
 //console.log(users);
 
 const app = express();
 const PORT = 3000;
 
+// "public" folder, "source" folder
+app.use('/assets', express.static('client/'));
+
 app.get('/', (req, res) => {
-    res.send(`A GET request on route '/'`);
+    //res.send(`A GET request on route '/'`);
+    res.sendFile(path.resolve('client/html/home.html'));
 });
+
+app.get('/styles/default-styles.css', (req, res) => {
+    //res.send(`A GET request on route '/'`);
+    res.sendFile(path.resolve('client/styles/default-styles.css'));
+});
+
+app.get('/images/dr-evil.jpg', (req, res) => {
+    //res.send(`A GET request on route '/'`);
+    res.sendFile(path.resolve('client/images/dr-evil.jpg'));
+});
+
 
 app.get('/all-users', (req, res) => {
     res.json(users);
